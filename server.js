@@ -21,7 +21,7 @@ app.use(cors());
 connectDb();
 
 // Serve static files from the "uploads" directory
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("tmp/uploads"));
 
 //api endpoints
 
