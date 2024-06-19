@@ -8,6 +8,9 @@ import ticketRouter from "./routes/ticket.route.js";
 import orderRouter from "./routes/order.route.js";
 import articleRouter from "./routes/article.route.js";
 import commentRouter from "./routes/comment.route.js";
+import multer from "multer";
+import multerS3 from "multer-s3";
+import AWS from "aws-sdk";
 import { Server } from "socket.io";
 import http from "http";
 
@@ -20,14 +23,39 @@ app.use(express.json());
 app.use(cors());
 connectDb();
 
-// Serve static files from the "uploads" directory
-app.use("/uploads", express.static("uploads"));
+// Konfigurasi AWS
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+const s3 = new AWS.S3();
+
+// Konfigurasi multer untuk menggunakan S3
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_BUCKET_NAME,
+    acl: 'public-read',
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString() + '-' + file.originalname);
+    }
+  })
+});
+
+// API endpoint untuk upload file
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.send('File uploaded successfully!');
+});
 
 //api endpoints
 
 //tours api
 app.use("/api/tours", tourRouter);
-app.use("/images", express.static("uploads"));
 
 //user api
 app.use("/api", userRouter);
