@@ -21,7 +21,7 @@ app.use(cors());
 connectDb();
 
 // Serve static files from the "uploads" directory
-app.use("/uploads", express.static("tmp/uploads"));
+app.use("/uploads", express.static("uploads"));
 
 //api endpoints
 
@@ -42,7 +42,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/articles", articleRouter);
 
 //comment api
-app.use("/api/comments", commentRouter); 
+app.use("/api/comments", commentRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello");

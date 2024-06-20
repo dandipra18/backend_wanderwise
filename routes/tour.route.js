@@ -11,7 +11,7 @@ import multer from "multer";
 const tourRouter = express.Router();
 
 const storage = multer.diskStorage({
-  destination: "/tmp/uploads",
+  destination: "uploads",
   filename: (req, file, cb) => {
     return cb(null, `${Date.now()}${file.originalname}`);
   },
